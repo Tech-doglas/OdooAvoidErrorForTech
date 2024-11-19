@@ -6,6 +6,7 @@
 // @author       Danny
 // @match        https://digital-star-canada-eva-group.odoo.com/*
 // @grant        none
+// @updateURL    https://github.com/Tech-doglas/OdooAvoidErrorForTech/raw/main/main.js
 // ==/UserScript==
 
 (function() {
