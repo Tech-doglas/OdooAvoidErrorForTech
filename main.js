@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Easy Use with Quantity Highlight and Button Disable
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://digital-star-canada-eva-group.odoo.com/*
