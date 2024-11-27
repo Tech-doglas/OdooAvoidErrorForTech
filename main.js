@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Easy Use with Quantity Highlight and Button Disable
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.10
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://digital-star-canada-eva-group.odoo.com/*
@@ -79,7 +79,6 @@
     function disablPutInPackButton() {
         const CreatePutInPackButton = Array.from(document.querySelectorAll('[name="action_put_in_pack"]'))
             .find(button => button.textContent.trim() === 'Put in Pack');
-        console.log(CreatePutInPackButton)
 
         if (CreatePutInPackButton) {
             // Disable the "Transfer" button
@@ -168,18 +167,17 @@
                 // Get the quantity cell
                 const qtyCell = row.querySelector('[name="product_qty"]');
 
-                console.log(qtyCell)
-
-                // Check if the quantity is greater than 1
-                if (parseFloat(qtyCell.textContent) > 1.00) {
-                    qtyCell.style.backgroundColor = 'red';
-                    qtyCell.style.color = 'black';
-                    qtyCell.style.fontWeight = 'bold';  // Optional: makes the text bold
+                if (qtyCell) {
+                    // Check if the quantity is greater than 1
+                    if (parseFloat(qtyCell.textContent) > 1.00) {
+                        qtyCell.style.backgroundColor = 'red';
+                        qtyCell.style.color = 'black';
+                        qtyCell.style.fontWeight = 'bold';  // Optional: makes the text bold
+                    }
                 }
             });
         }
     }
-
 
     // Function to reset the functionality
     function resetFunctionality() {
