@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         Easy Use with Quantity Highlight and Button Disable
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://digital-star-canada-eva-group.odoo.com/*
 // @grant        none
-// @updateURL    https://github.com/Tech-doglas/OdooAvoidErrorForTech/raw/main/main.js
 // ==/UserScript==
 
 (function() {
@@ -161,6 +160,27 @@
         }
     }
 
+    function highlightqty() {
+        const rows = document.querySelectorAll('.o_data_row');
+
+        if (rows) {
+            rows.forEach(row => {
+                // Get the quantity cell
+                const qtyCell = row.querySelector('[name="product_qty"]');
+
+                console.log(qtyCell)
+
+                // Check if the quantity is greater than 1
+                if (parseFloat(qtyCell.textContent) > 1.00) {
+                    qtyCell.style.backgroundColor = 'red';
+                    qtyCell.style.color = 'black';
+                    qtyCell.style.fontWeight = 'bold';  // Optional: makes the text bold
+                }
+            });
+        }
+    }
+
+
     // Function to reset the functionality
     function resetFunctionality() {
         highlightCompanyName();   // Highlight company name
@@ -169,6 +189,7 @@
         disablPutInPackButton();
         waitForQuantityInput();   // Start waiting for the quantity input and label to appear
         highlightFromLocation();  // Check and highlight "From Location" if necessary
+        highlightqty();
     }
 
     // Wait for the page to load initially and then run the functions
