@@ -1,29 +1,15 @@
 // ==UserScript==
 // @name         Easy Use with Quantity Highlight and Button Disable
 // @namespace    http://tampermonkey.net/
-// @version      0.10
+// @version      0.11
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
-// @match        https://digital-star-canada-eva-group.odoo.com/*
+// @match        https://*.odoo.com/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
-
-    // Define the list of company names to highlight
-    const highlightNames = [
-        'Doglas Trading Inc',
-        'Print Xcalibur Inc. US',
-        'Supply the six Inc.',
-        'MRL Incentives Inc.',
-        'Solutionize Inc.'
-    ];
-
-    // List of company names that should NOT be highlighted
-    const noHighlightNames = [
-        'Print Xcalibur Inc. CA'
-    ];
 
     // Function to highlight the company name
     function highlightCompanyName() {
@@ -32,16 +18,16 @@
         if (companyNameElement) {
             const companyName = companyNameElement.textContent.trim();
 
-            // Check if the company name is in the highlight list
-            if (highlightNames.includes(companyName)) {
-                // Apply red background and black text color to highlighted names
+            const companyPattern = /([A-Za-z0-9\s]+Inc\.\s*CA)/i;  // Regex to find any company with "Inc."
+
+            // Find all matches in the page's text
+            const matches = companyName.match(companyPattern);
+
+            if (!matches) {
                 companyNameElement.style.backgroundColor = 'red';
                 companyNameElement.style.color = 'black';
                 companyNameElement.style.fontWeight = 'bold';  // Optional: makes the text bold
-            }
-            // Check if the company name is in the no highlight list
-            else if (noHighlightNames.includes(companyName)) {
-                // Remove any previous highlighting (if any)
+            } else {
                 companyNameElement.style.backgroundColor = '';
                 companyNameElement.style.color = '';
                 companyNameElement.style.fontWeight = '';
