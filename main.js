@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Easy Use with Quantity Highlight and Button Disable
 // @namespace    http://tampermonkey.net/
-// @version      0.12
+// @version      0.12.1
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -83,7 +83,7 @@
             question.textContent = "Who Are You?";
             content.appendChild(question);
 
-            const names = ["Gorden", "Danny", "John", "Leon", "Yitong", "Assistant"];
+            const names = ["Gorden", "Danny", "John", "Leon", "Yitong","Henry", "Assistant"];
             names.forEach((name) => {
                 const button = document.createElement("button");
                 button.textContent = name;
