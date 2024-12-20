@@ -1,4 +1,4 @@
-# Easy Use with Quantity Highlight and Button Disable - UserScript
+# Enhance Function in odoo for Tech
 
 ## Description
 
@@ -76,7 +76,7 @@ This UserScript is designed to enhance the user experience on Odoo pages by auto
 
 | Task                                      | Description                                                                                | Status   |
 |-------------------------------------------|---------------------------------------------------------------------------------------------|----------|
-| **Add label printing on the product page**| Enable easy label printing for Assistant.                                                   | Ongoing  |
+| **Add label printing on the product page**| Enable easy label printing for Assistant.                                                   | Ongoing 40%  |
 | **Enhance the name selection function**   | Show the name selection popup only once, and disable apps after a name is chosen.           | Ongoing  |
 
 

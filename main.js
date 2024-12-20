@@ -1,17 +1,79 @@
 // ==UserScript==
-// @name         Easy Use with Quantity Highlight and Button Disable
+// @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.12.1
+// @version      0.13
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
 // @grant        none
+// @require      https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js
 // ==/UserScript==
 
 (function() {
     'use strict';
 
     const DISABLE_CLASS = "o_disable_button";
+
+    // Include jsBarcode for barcode generation
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js';
+    script.onload = renderLabel;
+    document.head.appendChild(script);
+
+    let canvas;
+
+    function renderLabel(model, specs, upc) {
+        const dpi = 600; // High resolution for clarity
+        const width = Math.round(62 / 25.4 * dpi);  // 62mm to pixels
+        const height = Math.round(29 / 25.4 * dpi); // 29mm to pixels
+
+        // Create the canvas
+        canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.border = '1px solid black'; // Optional for debugging
+
+        // Get canvas context
+        const ctx = canvas.getContext('2d');
+
+        // Background color
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+
+        // Text settings - smaller font size
+        ctx.fillStyle = '#000000';
+        ctx.font = `${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
+        ctx.textAlign = 'center';
+
+        // Add the model (first line of text)
+        ctx.fillText(model, width / 2, height * 0.3);
+
+        // Add the specs (second line of text)
+        ctx.fillText(specs, width / 2, height * 0.45);
+
+        // Create a barcode below the text with longer width
+        const barcodeCanvas = document.createElement('canvas');
+        barcodeCanvas.width = width * 0.9; // 90% of label width for longer barcode
+        barcodeCanvas.height = height * 0.2; // 20% of label height for the barcode
+
+        JsBarcode(barcodeCanvas, upc, {
+            format: 'CODE39',
+            width: 4, // Narrower bars for smaller size
+            height: barcodeCanvas.height,
+            displayValue: true,
+            fontSize: Math.round(14 * (dpi / 96)), // Larger font size for barcode value
+            fontWeight: 'bold', // Make the barcode value bold
+            margin: 0, // Remove unnecessary margins
+        });
+
+        // Adjust barcode position by shifting it higher
+        const barcodeX = (width - barcodeCanvas.width) / 2; // Center the barcode horizontally
+        const barcodeY = height * 0.5; // Position barcode closer to text
+        ctx.drawImage(barcodeCanvas, barcodeX, barcodeY, barcodeCanvas.width, barcodeCanvas.height);
+    }
+
+
+
 
     // Function to disable all buttons except Inventory and Manufacturing
     const disableButtons = () => {
@@ -270,6 +332,128 @@
         }
     }
 
+    const PrintLabelButton = () => {
+        // Check if the button is already added to prevent duplicates
+        if (!document.querySelector("#print-label-button")) {
+            // Create the button
+            const printButton = document.createElement("button");
+            printButton.id = "print-label-button"; // Assign an ID for later reference
+            printButton.textContent = "Print Label";
+
+            // Style the button to make it look similar to the Action button
+            printButton.style.fontSize = "14px"; // Match the font size of the Action button
+            printButton.style.padding = "10px 15px"; // Adjust padding to match the Action button
+            printButton.style.marginRight = "10px"; // Space between Print Label and Action button
+            printButton.style.backgroundColor = "#007bff"; // Button background color (blue)
+            printButton.style.color = "white";
+            printButton.style.border = "1px solid #007bff"; // Border color similar to Action button
+            printButton.style.borderRadius = "5px"; // Rounded corners
+            printButton.style.cursor = "pointer";
+
+            // Event listener for the button's click action
+            printButton.addEventListener("click", () => {
+                console.log("Print Label button clicked");
+                // Remove this line to stop the default print dialog from showing
+                // window.print();  // This is a basic browser print dialog - remove this line
+
+                if (canvas) {
+
+                    const spanElement = document.querySelector('[name="to_product_short_name"] span');
+                    const inputElement = document.querySelector('#to_product_id');
+
+                    if (spanElement && inputElement) {
+                        const ShortName = spanElement.textContent.trim();
+                        const regex = /\[([A-Z]+[0-9]+[A-Z]*)\]/;  // case-insensitive matching
+                        const match = inputElement.value.match(regex);
+                        const UPC = match ? match[1] : ''; // Ensure UPC is extracted correctly
+
+                        const ComputerMatch = ShortName.match(/^(.*?)(\d+GB \d+(?:TB|GB))$/);
+
+                        if (ComputerMatch) {
+                            const Model = ComputerMatch[1].trim();
+                            const specs = ComputerMatch[2].trim().replace(" ", "+");
+
+                            // Now pass Model, specs, and UPC to renderLabel
+                            renderLabel(Model, specs, UPC);
+
+                        }
+                    }
+
+                    const imageUrl = canvas.toDataURL('image/png');
+
+                    // Create an invisible iframe to hold the content for printing
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'absolute'; // Make it invisible and out of view
+                    iframe.style.width = '0px';
+                    iframe.style.height = '0px';
+                    iframe.style.border = 'none';
+                    document.body.appendChild(iframe);
+
+                    // Write the content (image) directly into the iframe document with page size set
+                    iframe.contentWindow.document.open();
+                    iframe.contentWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Print Label</title>
+                            <style>
+                                @page {
+                                    size: 62mm 29mm; /* Set page size explicitly */
+                                    margin: 0;       /* Remove margins for edge-to-edge printing */
+                                }
+                                body {
+                                    margin: 0;
+                                    padding: 0;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    height: 100vh;
+                                    background: white;
+                                }
+                                img {
+                                    max-width: 100%;
+                                    max-height: 100%;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <img src="${imageUrl}" alt="Label" />
+                        </body>
+                    </html>
+                `);
+                    iframe.contentWindow.document.close();
+
+                    // Wait for the image to load before triggering the print dialog
+                    iframe.contentWindow.document.querySelector('img').onload = function () {
+                        console.log('Image loaded, preparing print dialog...');
+
+                        // Trigger the print dialog and focus the iframe window
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+
+                        // Clean up the iframe after a short delay
+                        setTimeout(() => document.body.removeChild(iframe), 2000);
+                    };
+
+                    // Handle errors in loading the image
+                    iframe.contentWindow.document.querySelector('img').onerror = function () {
+                        console.error("Image failed to load.");
+                        document.body.removeChild(iframe); // Remove iframe if image fails to load
+                    };
+                }
+            });
+
+            // Find the container that holds the "Action" button
+            const actionMenu = document.querySelector('.o_cp_action_menus');
+
+            if (actionMenu) {
+                // Prepend the Print Label button to the container, so it appears before the Action button
+                actionMenu.insertBefore(printButton, actionMenu.firstChild); // This will put the button on the left
+            }
+        }
+    }
+
+
+
     // Function to reset the functionality
     const resetFunctionality = () => {
         highlightCompanyName(); // Highlight company name
@@ -279,6 +463,7 @@
         waitForQuantityInput(); // Start waiting for the quantity input and label to appear
         highlightFromLocation(); // Check and highlight "From Location" if necessary
         highlightqty();
+        PrintLabelButton();
     }
 
     // Wait for the page to load initially and then run the functions
