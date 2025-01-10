@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.13
+// @version      0.13.1
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -319,6 +319,16 @@
             rows.forEach(row => {
                 // Get the quantity cell
                 const qtyCell = row.querySelector('[name="product_qty"]');
+
+                const NameCell = row.querySelector('[name="to_product_short_name"]');
+
+                if (NameCell) {
+                    if (NameCell.textContent.includes("15S-FQ0008NIA") || NameCell.textContent.includes("250 G9")) {
+                        NameCell.style.backgroundColor = 'Yellow';
+                        NameCell.style.color = 'black';
+                        NameCell.style.fontWeight = 'bold'; // Optional: makes the text b
+                    }
+                }
 
                 if (qtyCell) {
                     // Check if the quantity is greater than 1
