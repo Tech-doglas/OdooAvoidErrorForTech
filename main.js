@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.13.1
+// @version      0.13.2
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -20,7 +20,16 @@
     script.onload = renderLabel;
     document.head.appendChild(script);
 
+    const ReturnCondition = {
+        "return new": "RN",
+        "grade a": "RA",
+        "grade b": "RB",
+        "grade c": "RC",
+        "grade f": "RF",
+    };
+
     let canvas;
+
 
     function renderLabel(model, specs, upc) {
         const dpi = 600; // High resolution for clarity
@@ -377,11 +386,30 @@
                         const match = inputElement.value.match(regex);
                         const UPC = match ? match[1] : ''; // Ensure UPC is extracted correctly
 
-                        const ComputerMatch = ShortName.match(/^(.*?)(\d+GB \d+(?:TB|GB))$/);
+                        const ComputerMatch = ShortName.match(/^(.*?)\b(\d+GB \d+(?:TB|GB))\b(.*)$/);
 
                         if (ComputerMatch) {
-                            const Model = ComputerMatch[1].trim();
+                            let Model = ComputerMatch[1].replace(/\bReturn\b/gi, "").trim();
+                            // Return Word is showing
+                            if (ComputerMatch[3]) {
+                                const lowercaseModelname = ComputerMatch[3].trim().toLowerCase()
+
+                                let abbreviation = "";  // Default fallback
+
+                                Object.keys(ReturnCondition).forEach(key => {
+                                    if (lowercaseModelname.includes(key)) {
+                                        abbreviation = ReturnCondition[key];
+                                    }
+                                });
+
+                                if (abbreviation) {
+                                    Model += ` ${abbreviation}`;
+                                }
+
+                            }
                             const specs = ComputerMatch[2].trim().replace(" ", "+");
+
+
 
                             // Now pass Model, specs, and UPC to renderLabel
                             renderLabel(Model, specs, UPC);
