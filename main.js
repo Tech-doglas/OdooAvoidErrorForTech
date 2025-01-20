@@ -611,14 +611,14 @@
 
         // Make the AJAX call first to get the image URLs
         $.ajax({
-          url: "https://192.168.50.161:8080/generate-image",
+          url: "https://192.168.50.240:8080/generate-image",
           type: "POST",
           data: formData,
           success: function (response) {
             let Image_URL = "";
             response.image_urls.forEach((url) => {
                 console.log(url)
-              Image_URL = "https://192.168.50.161:8080/" + url; // Assuming the first URL is what we need
+              Image_URL = "https://192.168.50.240:8080/" + url; // Assuming the first URL is what we need
             });
 
             if (Image_URL) {
