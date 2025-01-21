@@ -694,15 +694,15 @@
                 // Make the AJAX call first to get the image URLs
                 $.ajax({
                     url: "https://192.168.50.240:8080/generate-image", // For real
-                    // url: "http://127.0.0.1:5000/generate-image", // For real
+                    // url: "http://127.0.0.1:5000/generate-image", // For Testing
                     type: "POST",
                     data: formData,
                     success: function (response) {
                         let img_URL = [];
                         response.image_urls.forEach((url) => {
                             console.log(url)
-                            img_URL.push("http://127.0.0.1:5000/" + url) // For real
-                            // img_URL.push("http://127.0.0.1:5000/" + url)
+                            img_URL.push("https://192.168.50.240:8080/" + url) // For real
+                            // img_URL.push("http://127.0.0.1:5000/" + url) // For Testing
                         });
 
                         for (let index = 0; index < img_URL.length; index++) {
