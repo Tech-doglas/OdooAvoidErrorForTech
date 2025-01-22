@@ -53,7 +53,7 @@
 
         // Text settings - smaller font size
         ctx.fillStyle = "#000000";
-        ctx.font = `${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
+        ctx.font = `bold ${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
         ctx.textAlign = "center";
 
         // Add the model (first line of text)
