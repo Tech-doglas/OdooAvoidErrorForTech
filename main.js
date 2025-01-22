@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.14.2
+// @version      0.14.3
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -493,7 +493,7 @@
                 const inputElement = document.querySelector("#to_product_id");
 
                 let Model, specs, originModel;
-                let [ssd, ram] = []
+                let [ram, ssd] = []
 
                 if (spanElement && inputElement) {
                     const ShortName = spanElement.textContent.trim();
@@ -529,7 +529,7 @@
                             }
                         }
                         const temp_spec = ComputerMatch[2].trim();
-                        [ssd, ram] = temp_spec.split(" ");
+                        [ram, ssd] = temp_spec.split(" ");
                         specs = ComputerMatch[2].trim().replace(" ", "+");
 
                         // Now pass Model, specs, and UPC to renderLabel

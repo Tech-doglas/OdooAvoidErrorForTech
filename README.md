@@ -78,5 +78,6 @@ This UserScript is designed to enhance the user experience on Odoo pages by auto
 |-------------------------------------------|---------------------------------------------------------------------------------------------|----------|
 | **Add label printing on the product page**| Enable easy label printing for Assistant.                                                   | Ongoing 60%  |
 | **Enhance the name selection function**   | Show the name selection popup only once, and disable apps after a name is chosen.           | Ongoing  |
+| **odoo too porduct width**   |            | pending  |
 
 
