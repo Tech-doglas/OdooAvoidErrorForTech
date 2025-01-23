@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.15
+// @version      0.14.4
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -465,6 +465,16 @@
         }
     };
 
+    function CreateButton(printButton) {
+        // Find the container that holds the "Action" button
+        const actionMenu = document.querySelector(".o_cp_action_menus");
+        if (actionMenu) {
+            // Prepend the Print Label button to the container, so it appears before the Action button
+            actionMenu.insertBefore(printButton, actionMenu.firstChild); // This will put the button on the left
+        }
+
+    }
+
     const PrintLabelButton = () => {
         // Check if the button is already added to prevent duplicates
         if (!document.querySelector("#print-label-button")) {
@@ -545,7 +555,7 @@
                 // Make the AJAX call first to get the image URLs
                 $.ajax({
                     url: "https://192.168.50.240:8080/generate-image", // For real
-                    // url: "http://127.0.0.1:5000/generate-image", // For Testing
+                    //  url: "http://127.0.0.1:5000/generate-image", // For Testing
                     type: "POST",
                     data: formData,
                     success: function (response) {
@@ -553,7 +563,7 @@
                         response.image_urls.forEach((url) => {
                             console.log(url)
                             img_URL.push("https://192.168.50.240:8080/" + url) // For real
-                            // img_URL.push("http://127.0.0.1:5000/" + url) // For Testing
+                            //  img_URL.push("http://127.0.0.1:5000/" + url) // For Testing
                         });
 
                         for (let index = 0; index < img_URL.length; index++) {
@@ -586,15 +596,34 @@
                 });
 
             });
-
-            // Find the container that holds the "Action" button
-            const actionMenu = document.querySelector(".o_cp_action_menus");
-            if (actionMenu) {
-                // Prepend the Print Label button to the container, so it appears before the Action button
-                actionMenu.insertBefore(printButton, actionMenu.firstChild); // This will put the button on the left
-            }
+            CreateButton(printButton)
         }
     };
+
+    function LabelCreateButton() {
+        if (!document.querySelector("#edit-label-button")) {
+            const printButton = document.createElement("button");
+            printButton.id = "edit-label-button"; // Assign an ID for later reference
+            printButton.textContent = "Edit/Create Label";
+
+            // Style the button to make it look similar to the Action button
+            printButton.style.fontSize = "14px"; // Match the font size of the Action button
+            printButton.style.padding = "10px 15px"; // Adjust padding to match the Action button
+            printButton.style.marginRight = "10px"; // Space between Print Label and Action button
+            printButton.style.backgroundColor = "#11ff00"; // Button background color (green)
+            printButton.style.color = "black";
+            printButton.style.border = "1px solid #11ff00"; // Border color similar to Action button
+            printButton.style.borderRadius = "5px"; // Rounded corners
+            printButton.style.cursor = "pointer";
+
+            printButton.addEventListener("click", function() {
+                window.open("https://192.168.50.240:8080/", "_blank"); //server side
+                // window.open("http://localhost:5000", "_blank"); // Testing
+            });
+
+            CreateButton(printButton)
+        }
+    }
 
     // Function to reset the functionality
     const resetFunctionality = () => {
@@ -606,6 +635,7 @@
         highlightFromLocation(); // Check and highlight "From Location" if necessary
         highlightqty();
         PrintLabelButton();
+        LabelCreateButton();
     };
 
     // Wait for the page to load initially and then run the functions
