@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.14.4
+// @version      0.15.1
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
