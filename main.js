@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech
 // @namespace    http://tampermonkey.net/
-// @version      0.15.1
+// @version      0.15.2
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
 // @author       Danny
 // @match        https://*.odoo.com/*
@@ -30,6 +30,16 @@
         "grade c": "RC",
         "grade f": "RF",
     };
+
+    const names = [
+        "Danny",
+        "John",
+        "Leon",
+        "Yitong",
+        "Henry",
+        "Toby",
+        "Assistant",
+    ];
 
     let canvas;
 
@@ -245,15 +255,6 @@
             question.textContent = "Who Are You?";
             content.appendChild(question);
 
-            const names = [
-                "Gorden",
-                "Danny",
-                "John",
-                "Leon",
-                "Yitong",
-                "Henry",
-                "Assistant",
-            ];
             names.forEach((name) => {
                 const button = document.createElement("button");
                 button.textContent = name;
