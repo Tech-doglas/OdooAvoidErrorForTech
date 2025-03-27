@@ -33,6 +33,7 @@
 
     const names = [
         "Danny",
+        "Kon",
         "John",
         "Leon",
         "Yitong",
