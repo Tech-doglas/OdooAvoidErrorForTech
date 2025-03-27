@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Enhance Function in odoo for Tech
+// @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.15.2
+// @version      0.16.0
 // @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
-// @author       Danny
+// @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
 // @require      https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js
@@ -163,22 +163,22 @@
         // Wait for the image to load before triggering the print dialog
         iframe.contentWindow.document.querySelector("img").onload =
             function () {
-                console.log("Image loaded, preparing print dialog...");
+            console.log("Image loaded, preparing print dialog...");
 
-                // Trigger the print dialog and focus the iframe window
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
+            // Trigger the print dialog and focus the iframe window
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
 
-                // Clean up the iframe after a short delay
-                setTimeout(() => document.body.removeChild(iframe), 2000);
-            };
+            // Clean up the iframe after a short delay
+            setTimeout(() => document.body.removeChild(iframe), 2000);
+        };
 
         // Handle errors in loading the image
         iframe.contentWindow.document.querySelector("img").onerror =
             function () {
-                console.error("Image failed to load.");
-                document.body.removeChild(iframe); // Remove iframe if image fails to load
-            };
+            console.error("Image failed to load.");
+            document.body.removeChild(iframe); // Remove iframe if image fails to load
+        };
     }
 
     // Function to disable all buttons except Inventory and Manufacturing
@@ -253,6 +253,7 @@
 
             const question = document.createElement("h2");
             question.textContent = "Who Are You?";
+            question.style.color = "#000";
             content.appendChild(question);
 
             names.forEach((name) => {
@@ -417,8 +418,8 @@
 
             // Check if any of the keywords are found in the span text
             const isKeywordPresent = keywords.some((keyword) =>
-                spanText.includes(keyword)
-            );
+                                                   spanText.includes(keyword)
+                                                  );
 
             if (isKeywordPresent) {
                 const fromLocationLabel = document.querySelector(
@@ -496,110 +497,206 @@
             printButton.style.cursor = "pointer";
 
             // Event listener for the button's click action
-            printButton.addEventListener("click", () => {
-                console.log("Print Label button clicked");
-
-                const spanElement = document.querySelector(
-                    '[name="to_product_short_name"] span'
-                );
-                const inputElement = document.querySelector("#to_product_id");
-
-                let Model, specs, originModel;
-                let [ram, ssd] = []
-
-                if (spanElement && inputElement) {
-                    const ShortName = spanElement.textContent.trim();
-                    const regex = /\[([A-Z]+[0-9]+[A-Z]*)\]/; // case-insensitive matching
-                    const match = inputElement.value.match(regex);
-                    const UPC = match ? match[1] : ""; // Ensure UPC is extracted correctly
-
-                    const ComputerMatch = ShortName.match(
-                        /^(.*?)\b(\d+GB \d+(?:TB|GB))\b(.*)$/
-                    );
-
-                    if (ComputerMatch) {
-                        Model = ComputerMatch[1]
-                            .replace(/\bReturn\b/gi, "")
-                            .trim();
-                        // Return Word is showing
-                        originModel = Model
-                        if (ComputerMatch[3]) {
-                            const lowercaseModelname = ComputerMatch[3]
-                                .trim()
-                                .toLowerCase();
-
-                            let abbreviation = ""; // Default fallback
-
-                            Object.keys(ReturnCondition).forEach((key) => {
-                                if (lowercaseModelname.includes(key)) {
-                                    abbreviation = ReturnCondition[key];
-                                }
-                            });
-
-                            if (abbreviation) {
-                                Model += ` ${abbreviation}`;
-                            }
-                        }
-                        const temp_spec = ComputerMatch[2].trim();
-                        [ram, ssd] = temp_spec.split(" ");
-                        specs = ComputerMatch[2].trim().replace(" ", "+");
-
-                        // Now pass Model, specs, and UPC to renderLabel
-                        renderLabel(Model, specs, UPC);
-                    }
-                }
-
-                const imageUrl = canvas.toDataURL("image/png");
-                let img_array = []
-
-                const formData = `text_files=${originModel}.txt&ssd=${ssd}&ram=${ram}`
-
-                // Make the AJAX call first to get the image URLs
-                $.ajax({
-                    url: "https://192.168.50.240:8080/generate-image", // For real
-                    //  url: "http://127.0.0.1:5000/generate-image", // For Testing
-                    type: "POST",
-                    data: formData,
-                    success: function (response) {
-                        let img_URL = [];
-                        response.image_urls.forEach((url) => {
-                            console.log(url)
-                            img_URL.push("https://192.168.50.240:8080/" + url) // For real
-                            //  img_URL.push("http://127.0.0.1:5000/" + url) // For Testing
-                        });
-
-                        for (let index = 0; index < img_URL.length; index++) {
-                            const img = new Image();
-                            img.src = img_URL[index];
-                            img_array.push(img.src)
-
-                            img.onload = function () {
-                                // Once the image is loaded, create the canvas and render the image
-                                const canvas = document.createElement("canvas");
-                                const ctx = canvas.getContext("2d");
-
-                                // Set canvas size based on image
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-
-                                // Draw the image on the canvas
-                                ctx.drawImage(img, 0, 0);
-
-                                // Now proceed with the rest of the logic (like rendering the label)
-                                renderLabel(canvas);
-                            };
-
-                        }
-                        createFrame(imageUrl, img_array)
-                    },
-                    error: function (xhr) {
-                        alert(`Error: ${xhr.responseJSON.error}`);
-                    },
-                });
-
-            });
+            printButton.addEventListener("click", printVerifyPopupWindow);
             CreateButton(printButton)
         }
+    };
+
+    const getPrintLabelData = () => {
+        const spanElement = document.querySelector(
+            '[name="to_product_short_name"] span'
+        );
+        const inputElement = document.querySelector("#to_product_id");
+
+        let UPC, Model, ram, ssd, originModel;
+
+        if (spanElement && inputElement) {
+            const ShortName = spanElement.textContent.trim();
+            const regex = /\[([A-Z]+[0-9]+[A-Z]*)\]/; // case-insensitive matching
+            const match = inputElement.value.toUpperCase().match(regex);
+            UPC = match ? match[1] : ""; // Ensure UPC is extracted correctly
+
+            const ComputerMatch = ShortName.match(
+                /^(.*?)\b(\d+GB \d+(?:TB|GB))\b(.*)$/
+            );
+
+            if (ComputerMatch) {
+                Model = ComputerMatch[1]
+                    .replace(/\bReturn\b/gi, "")
+                    .trim();
+                // Return Word is showing
+                originModel = Model
+                if (ComputerMatch[3]) {
+                    const lowercaseModelname = ComputerMatch[3]
+                    .trim()
+                    .toLowerCase();
+
+                    let abbreviation = ""; // Default fallback
+
+                    Object.keys(ReturnCondition).forEach((key) => {
+                        if (lowercaseModelname.includes(key)) {
+                            abbreviation = ReturnCondition[key];
+                        }
+                    });
+
+                    if (abbreviation) {
+                        Model += ` ${abbreviation}`;
+                    }
+                }
+                const temp_spec = ComputerMatch[2].trim().split(" ");
+                ram = temp_spec[0];
+                ssd = temp_spec[1];
+            }
+        }
+
+        return {UPC, Model, ram, ssd, originModel};
+    };
+
+    const printVerifyPopupWindow = () => {
+        if (!document.querySelector("#verify-popup")) {
+            const popup = document.createElement("div");
+            popup.id = "verify-popup";
+            popup.style.position = "fixed";
+            popup.style.zIndex = "1000";
+            popup.style.top = "0";
+            popup.style.left = "0";
+            popup.style.width = "100%";
+            popup.style.height = "100%";
+            popup.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            popup.style.display = "flex";
+            popup.style.justifyContent = "center";
+            popup.style.alignItems = "center";
+            popup.addEventListener("click", () => {
+                popup.style.display = "none";
+            });
+
+            const content = document.createElement("div");
+            content.style.backgroundColor = "#fff";
+            content.style.padding = "20px";
+            content.style.borderRadius = "10px";
+            content.style.textAlign = "center";
+            content.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+
+            const title = document.createElement("h2");
+            title.textContent = "Scan Laptop UPC to Print Label";
+            title.style.color = "#000";
+            content.appendChild(title);
+
+            const upcInput = document.createElement("input");
+            upcInput.id = "upc-input";
+            upcInput.style.padding = "10px";
+            upcInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.keyCode === 13) {
+                    const {UPC, Model, ram, ssd, originModel} = getPrintLabelData();
+                    console.log({UPC, Model, ram, ssd, originModel})
+                    const targetUPC = e.target.value.trim().toUpperCase();
+                    upcInput.value = "";
+                    if (targetUPC == "420PASSMORE") {
+                        popup.style.display = "none";
+                        printLabel(UPC, Model, ram, ssd, originModel);
+                    } else if (targetUPC == "NEW"){
+                        window.open("https://192.168.50.240:8080/newLaptopUpc", "_blank");
+                    }
+                    else {
+                        const formData = `model=${originModel}&upc=${targetUPC}`
+                    $.ajax({
+                        url: "https://192.168.50.240:8080/VerifyUPC",
+                        type: "POST",
+                        data: formData,
+                        success: function (response) {
+                            switch (response.code) {
+                                case 200:
+                                    popup.style.display = "none";
+                                    printLabel(UPC, Model, ram, ssd, originModel);
+                                    break;
+                                case 404:
+                                    window.open("https://192.168.50.240:8080/newLaptopUpc", "_blank")
+                                default:
+                                    alert(`Error: ${response.message}`);
+                                    upcInput.focus();
+                                    break;
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(`Error: ${xhr.responseJSON.error}`);
+                        },
+                    });
+                    }
+                }
+            });
+            content.appendChild(upcInput);
+
+            popup.appendChild(content);
+            document.body.appendChild(popup);
+
+            upcInput.focus();
+        } else {
+            const popup = document.querySelector("#verify-popup");
+            popup.style.display = "flex";
+
+            const upcInput = document.querySelector("#upc-input");
+            upcInput.value = "";
+
+            upcInput.focus();
+        }
+    };
+
+    const printLabel = (UPC, Model, ram, ssd, originModel) => {
+        console.log("Print Label button clicked");
+
+        renderLabel(Model, `${ram}+${ssd}`, UPC);
+
+
+        const imageUrl = canvas.toDataURL("image/png");
+        let img_array = []
+
+        const formData = `text_files=${originModel}.txt&ssd=${ssd}&ram=${ram}`
+
+        // Make the AJAX call first to get the image URLs
+        $.ajax({
+            url: "https://192.168.50.240:8080/generate-image", // For real
+            //  url: "http://127.0.0.1:5000/generate-image", // For Testing
+            type: "POST",
+            data: formData,
+            success: function (response) {
+                let img_URL = [];
+                response.image_urls.forEach((url) => {
+                    console.log(url)
+                    img_URL.push("https://192.168.50.240:8080/" + url) // For real
+                    //  img_URL.push("http://127.0.0.1:5000/" + url) // For Testing
+                });
+
+                for (let index = 0; index < img_URL.length; index++) {
+                    const img = new Image();
+                    img.src = img_URL[index];
+                    img_array.push(img.src)
+
+                    img.onload = function () {
+                        // Once the image is loaded, create the canvas and render the image
+                        const canvas = document.createElement("canvas");
+                        const ctx = canvas.getContext("2d");
+
+                        // Set canvas size based on image
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+
+                        // Draw the image on the canvas
+                        ctx.drawImage(img, 0, 0);
+
+                        // Now proceed with the rest of the logic (like rendering the label)
+                        renderLabel(canvas);
+                    };
+
+                }
+                createFrame(imageUrl, img_array)
+            },
+            error: function (xhr) {
+                alert(`Error: ${xhr.responseJSON.error}`);
+            },
+        });
+
     };
 
     function LabelCreateButton() {
