@@ -445,6 +445,7 @@
 
                 if (NameCell) {
                     if (
+                        NameCell.textContent.includes("83A100QURM") ||
                         NameCell.textContent.includes("15S-FQ0008NIA") ||
                         NameCell.textContent.includes("250 G9")
                     ) {
