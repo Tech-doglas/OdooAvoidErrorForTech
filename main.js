@@ -483,7 +483,9 @@ const highlightqty = () => {
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83JC009CUS 32GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 17-cp3005dx 32GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 82VG00QFUS 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0131wm 16GB 256GB")
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0131wm 16GB 256GB") ||
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Dell 6HD73 32GB 1TB") ||
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 32GB 1TB")
 
                     ) {
 
