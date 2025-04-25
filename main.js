@@ -435,7 +435,7 @@
         }
     };
 
-    const highlightqty = () => {
+const highlightqty = () => {
         const rows = document.querySelectorAll(".o_data_row");
 
         if (rows) {
@@ -443,20 +443,27 @@
                 // Get the quantity cell
                 const qtyCell = row.querySelector('[name="product_qty"]');
 
+
                 const NameCell = row.querySelector('[name="to_product_short_name"]');
+
+                const FromCell = row.querySelector('[name="from_product_short_name"]');
 
                 if (NameCell) {
                     if (
-                        NameCell.textContent.includes("83A100QURM") ||
                         NameCell.textContent.includes("15S-FQ0008NIA") ||
-                        NameCell.textContent.includes("250 G9")
+                        NameCell.textContent.includes("250 G9") ||
+                        NameCell.textContent.includes("83A100QURM")
                     ) {
+
+
                         NameCell.style.backgroundColor = "Yellow";
                         NameCell.style.color = "black";
                         NameCell.style.fontWeight = "bold"; // Optional: makes the text b
                     }
+
                 }
-           //Pre-Build start
+
+                //Pre-Build
                 if (FromCell) {
                     if (
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 32GB 512GB") ||
@@ -469,7 +476,7 @@
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 16GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 14-cf2112wm 16GB 64GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus Q415MA-U5512 8GB 2TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15S-FQ0008NIA US Plug 16GB 256GB") ||
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-FQ0008NIA US Plug 16GB 256GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15S-FQ0008NIA US Plug 16GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus FX507ZC4-AS51-CA 32GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 40GB 1TB") ||
@@ -487,7 +494,7 @@
                     }
 
                 }
-                //pre-build end
+
                 if (qtyCell) {
                     // Check if the quantity is greater than 1
                     if (parseFloat(qtyCell.textContent) > 1.0) {
