@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.4
-// @description  Change text color contrast
+// @version      0.17.5
+// @description  Fix reading undefined issue
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -506,8 +506,10 @@ const highlightqty = () => {
                         qtyCell.style.fontWeight = "bold"; // Optional: makes the text bold
                     }
                 }
-                compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
-
+                
+                if (NameCell && FromCell) {
+                    compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
+                }
             });
         }
     };
