@@ -448,6 +448,7 @@ const highlightqty = () => {
 
                 const FromCell = row.querySelector('[name="from_product_short_name"]');
 
+
                 if (NameCell) {
                     if (
                         NameCell.textContent.includes("15S-FQ0008NIA") ||
@@ -505,14 +506,12 @@ const highlightqty = () => {
                         qtyCell.style.fontWeight = "bold"; // Optional: makes the text bold
                     }
                 }
-
-                //written by Toby
                 compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
 
             });
         }
     };
-    //for changing Ram only
+    //change Ram only
     function compareLastWords(str1, str2, style) {
         const arr1 = str1.split(" ");
         const arr2 = str2.split(" ");
@@ -526,7 +525,7 @@ const highlightqty = () => {
         } else {
         }
     }
-    //changing Ram only end
+    //change Ram only end
     
     function CreateButton(printButton) {
         // Find the container that holds the "Action" button
