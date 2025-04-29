@@ -505,10 +505,29 @@ const highlightqty = () => {
                         qtyCell.style.fontWeight = "bold"; // Optional: makes the text bold
                     }
                 }
+
+                //written by Toby
+                compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
+
             });
         }
     };
+    //for changing Ram only
+    function compareLastWords(str1, str2, style) {
+        const arr1 = str1.split(" ");
+        const arr2 = str2.split(" ");
 
+        const lastWord1 = arr1[arr1.length - 1];
+        const lastWord2 = arr2[arr2.length - 1];
+
+        if (lastWord1 === lastWord2) {
+            style.backgroundColor = "pink";
+            style.fontWeight = "bold";
+        } else {
+        }
+    }
+    //changing Ram only end
+    
     function CreateButton(printButton) {
         // Find the container that holds the "Action" button
         const actionMenu = document.querySelector(".o_cp_action_menus");
