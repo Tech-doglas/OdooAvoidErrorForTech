@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.6
+// @version      0.17.7
 // @description  Fix reading undefined issue
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -521,12 +521,12 @@ const highlightqty = () => {
 
         const lastWord1 = arr1[arr1.length - 1];
         const lastWord2 = arr2[arr2.length - 1];
-
-        if (lastWord1 === lastWord2) {
-            style.backgroundColor = "pink";
-            style.fontWeight = "bold";
-            style.color = "black";
-        } else {
+        if (lastWord1 !== null && lastWord2 !== ''){
+            if (lastWord1 === lastWord2) {
+                style.backgroundColor = "pink";
+                style.fontWeight = "bold";
+                style.color = "black";
+            } 
         }
     }
     //change Ram only end
