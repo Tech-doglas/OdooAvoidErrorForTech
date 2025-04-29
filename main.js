@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.5
+// @version      0.17.6
 // @description  Fix reading undefined issue
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -463,7 +463,9 @@ const highlightqty = () => {
                     }
 
                 }
-
+                if (NameCell && FromCell) {
+                    compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
+                }
                 //Pre-Build
                 if (FromCell) {
                     if (
@@ -506,10 +508,7 @@ const highlightqty = () => {
                         qtyCell.style.fontWeight = "bold"; // Optional: makes the text bold
                     }
                 }
-                
-                if (NameCell && FromCell) {
-                    compareLastWords(NameCell.textContent, FromCell.textContent, FromCell.style);
-                }
+   
             });
         }
     };
