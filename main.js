@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.3
-// @description  Highlight company names, disable Transfer button, highlight quantity label dynamically, and highlight From Location based on span content
+// @version      0.17.4
+// @description  Change text color contrast
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -522,6 +522,7 @@ const highlightqty = () => {
         if (lastWord1 === lastWord2) {
             style.backgroundColor = "pink";
             style.fontWeight = "bold";
+            style.color = "black";
         } else {
         }
     }
