@@ -473,7 +473,6 @@ const highlightqty = () => {
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Acer AG15-31P-3947 8GB 512GB")||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0079wm 8GB 128GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 14-cf2112wm 8GB 64GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus Q415MA-U5512 8GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 16GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 32GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 16GB 512GB") ||
