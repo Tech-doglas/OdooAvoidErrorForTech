@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.10
+// @version      0.17.11
 // @description  Fix reading undefined issue
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -491,7 +491,8 @@ const highlightqty = () => {
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1704ZA-I38512 24GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 32GB 1TB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0000ca 16GB 128GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA-WH52 16GB 256GB")
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA-WH52 16GB 256GB") || 
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1404ZA-I38128 16GB 256GB")
 
 
                     ) {
