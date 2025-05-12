@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.14
+// @version      0.17.15
 // @description  Fix reading undefined issue
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
