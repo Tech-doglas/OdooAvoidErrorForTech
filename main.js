@@ -503,7 +503,8 @@ const highlightqty = () => {
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 82XB008LUS 8GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 40GB 512GB") ||
                         FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA WH52 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1404ZA-I38128 16GB 512GB")
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1404ZA-I38128 16GB 512GB") ||
+                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA-WH52 16GB 512GB")
                     ) {
 
                         FromCell.innerHTML = "Pre-Build";
