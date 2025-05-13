@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.17.15
-// @description  Fix reading undefined issue
+// @version      0.18.0
+// @description  Add dynamic prebuild check
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -435,8 +435,20 @@
         }
     };
 
-const highlightqty = () => {
+    const highlightqty = async () => {
         const rows = document.querySelectorAll(".o_data_row");
+
+        let prebuildModels = [];
+        await $.ajax({
+            url: "https://raw.githubusercontent.com/Tech-doglas/OdooAvoidErrorForTech/refs/heads/main/Prebuild.txt",
+            type: "GET",
+            success: function (response) {
+                prebuildModels = response.split('\n').map(model => model.trim());
+            },
+            error: function (xhr) {
+                alert(`Error: ${xhr.responseJSON.error}`);
+            },
+        });
 
         if (rows) {
             rows.forEach((row) => {
@@ -469,42 +481,7 @@ const highlightqty = () => {
                 //Pre-Build
                 if (FromCell) {
                     if (
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 32GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Acer AG15-31P-3947 8GB 512GB")||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 14-cf2112wm 8GB 64GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0005dx 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 14-cf2112wm 16GB 64GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus Q415MA-U5512 8GB 2TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 40GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83JC009CUS 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 17-cp3005dx 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 82VG00QFUS 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0131wm 16GB 256GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Dell 6HD73 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0023dx 16GB 256GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA-WH52 16GB 256GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1704ZA-I38512 24GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("HP 15-fd0000ca 16GB 128GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus Q415MA-U5512 8GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1404ZA-I38128 16GB 256GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Acer AG15-31P-3947 8GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus G513RC-EH71 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 24GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1704ZA-I38512 40GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus FA707NV-DS71-CA 32GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1704ZA-I38512 40GB 2TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 40GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus FA707NV-DS71-CA 32GB 2TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 82RK017QUS 40GB 1TB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 82XB008LUS 8GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Lenovo 83A100QURM US Plug 40GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA WH52 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus X1404ZA-I38128 16GB 512GB") ||
-                        FromCell.textContent.includes(" ") && NameCell.textContent.includes("Asus F1504ZA-WH52 16GB 512GB")
+                        FromCell.textContent.includes(" ") && prebuildModels.includes(NameCell.textContent)
                     ) {
 
                         FromCell.innerHTML = "Pre-Build";
@@ -523,7 +500,7 @@ const highlightqty = () => {
                         qtyCell.style.fontWeight = "bold"; // Optional: makes the text bold
                     }
                 }
-   
+
             });
         }
     };
@@ -539,11 +516,11 @@ const highlightqty = () => {
                 style.backgroundColor = "pink";
                 style.fontWeight = "bold";
                 style.color = "black";
-            } 
+            }
         }
     }
     //change Ram only end
-    
+
     function CreateButton(printButton) {
         // Find the container that holds the "Action" button
         const actionMenu = document.querySelector(".o_cp_action_menus");
