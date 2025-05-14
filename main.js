@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.18.0
+// @version      0.18.1
 // @description  Add dynamic prebuild check
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -442,6 +442,7 @@
         await $.ajax({
             url: "https://raw.githubusercontent.com/Tech-doglas/OdooAvoidErrorForTech/refs/heads/main/Prebuild.txt",
             type: "GET",
+            cache: false,
             success: function (response) {
                 prebuildModels = response.split('\n').map(model => model.trim());
             },
