@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.0
+// @version      0.19.1
 // @description  Add order number label
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -120,7 +120,7 @@
 
         // Text settings - smaller font size
         ctx.fillStyle = "#000000";
-        ctx.font = `bold ${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
+        ctx.font = `bold ${Math.round(20 * (dpi / 96))}px Arial`; // Smaller font size (16px)
         ctx.textAlign = "center";
 
         ctx.fillText(orderNumber, width / 2, height / 2);
