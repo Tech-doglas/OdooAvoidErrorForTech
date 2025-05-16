@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.18.1
-// @description  Add dynamic prebuild check
+// @version      0.19.0
+// @description  Add order number label
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -100,7 +100,33 @@
         );
     }
 
-    const createFrame = (imageUrl, img) => {
+    function renderOrderNumberLabel(orderNumber) {
+        const dpi = 600; // High resolution for clarity
+        const width = Math.round((62 / 25.4) * dpi); // 62mm to pixels
+        const height = Math.round((29 / 25.4) * dpi); // 29mm to pixels
+
+        // Create the canvas
+        canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.border = "1px solid black"; // Optional for debugging
+
+        // Get canvas context
+        const ctx = canvas.getContext("2d");
+
+        // Background color
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, width, height);
+
+        // Text settings - smaller font size
+        ctx.fillStyle = "#000000";
+        ctx.font = `bold ${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
+        ctx.textAlign = "center";
+
+        ctx.fillText(orderNumber, width / 2, height / 2);
+    }
+
+    const createFrame = (img) => {
         // Create an invisible iframe to hold the content for printing
         const iframe = document.createElement("iframe");
         iframe.style.position = "absolute"; // Make it invisible and out of view
@@ -153,7 +179,6 @@
                                     </head>
                                     <body>
                                         <div id="image-container">
-                                        <img src="${imageUrl}" alt="Label" />
                                         ${imagesHTML}
                                         </div>
                                     </body>
@@ -561,14 +586,16 @@
             '[name="to_product_short_name"] span'
         );
         const inputElement = document.querySelector("#to_product_id");
+        const inputElement1 = document.querySelector("#order_number");
 
-        let UPC, Model, ram, ssd, originModel;
+        let UPC, Model, ram, ssd, originModel, orderNumber;
 
-        if (spanElement && inputElement) {
+        if (spanElement && inputElement && inputElement1) {
             const ShortName = spanElement.textContent.trim();
             const regex = /\[([A-Z]+[0-9]+[A-Z]*)\]/; // case-insensitive matching
             const match = inputElement.value.toUpperCase().match(regex);
             UPC = match ? match[1] : ""; // Ensure UPC is extracted correctly
+            orderNumber = inputElement1.value.toUpperCase().trim();
 
             const ComputerMatch = ShortName.match(
                 /^(.*?)\b(\d+GB \d+(?:TB|GB))\b(.*)$/
@@ -603,7 +630,7 @@
             }
         }
 
-        return {UPC, Model, ram, ssd, originModel};
+        return {UPC, Model, ram, ssd, originModel, orderNumber};
     };
 
     const printVerifyPopupWindow = () => {
@@ -643,13 +670,13 @@
             upcInput.style.padding = "10px";
             upcInput.addEventListener("keydown", (e) => {
                 if (e.key === "Enter" || e.keyCode === 13) {
-                    const {UPC, Model, ram, ssd, originModel} = getPrintLabelData();
-                    console.log({UPC, Model, ram, ssd, originModel})
+                    const {UPC, Model, ram, ssd, originModel, orderNumber} = getPrintLabelData();
+                    console.log({UPC, Model, ram, ssd, originModel, orderNumber})
                     const targetUPC = e.target.value.trim().toUpperCase();
                     upcInput.value = "";
                     if (targetUPC == "420PASSMORE") {
                         popup.style.display = "none";
-                        printLabel(UPC, Model, ram, ssd, originModel);
+                        printLabel(UPC, Model, ram, ssd, originModel, orderNumber);
                     } else if (targetUPC == "NEW"){
                         window.open("https://192.168.50.240:8080/newLaptopUpc", "_blank");
                     }
@@ -663,7 +690,7 @@
                             switch (response.code) {
                                 case 200:
                                     popup.style.display = "none";
-                                    printLabel(UPC, Model, ram, ssd, originModel);
+                                    printLabel(UPC, Model, ram, ssd, originModel, orderNumber);
                                     break;
                                 case 404:
                                     window.open("https://192.168.50.240:8080/newLaptopUpc", "_blank")
@@ -697,14 +724,14 @@
         }
     };
 
-    const printLabel = (UPC, Model, ram, ssd, originModel) => {
+    const printLabel = (UPC, Model, ram, ssd, originModel, orderNumber) => {
         console.log("Print Label button clicked");
 
-        renderLabel(Model, `${ram}+${ssd}`, UPC);
-
-
-        const imageUrl = canvas.toDataURL("image/png");
         let img_array = []
+        renderOrderNumberLabel(orderNumber);
+        img_array.push(canvas.toDataURL("image/png"));
+        renderLabel(Model, `${ram}+${ssd}`, UPC);
+        img_array.push(canvas.toDataURL("image/png"));
 
         const formData = `text_files=${originModel}.txt&ssd=${ssd}&ram=${ram}`
 
@@ -740,11 +767,11 @@
                         ctx.drawImage(img, 0, 0);
 
                         // Now proceed with the rest of the logic (like rendering the label)
-                        renderLabel(canvas);
+                        // renderLabel(canvas);
                     };
 
                 }
-                createFrame(imageUrl, img_array)
+                createFrame(img_array)
             },
             error: function (xhr) {
                 alert(`Error: ${xhr.responseJSON.error}`);
