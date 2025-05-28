@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.1
+// @version      0.19.2
 // @description  Add order number label
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
@@ -215,7 +215,8 @@
             if (
                 caption &&
                 !caption.textContent.includes("Inventory") &&
-                !caption.textContent.includes("Manufacturing")
+                !caption.textContent.includes("Manufacturing") &&
+                !caption.textContent.includes("Sales")
             ) {
                 div.style.pointerEvents = "none"; // Disable click events
                 div.style.opacity = "0.5"; // Dim the button
