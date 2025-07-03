@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.2
-// @description  Add order number label
+// @version      0.19.3
+// @description  Allow print label after done
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -586,7 +586,13 @@
         const spanElement = document.querySelector(
             '[name="to_product_short_name"] span'
         );
-        const inputElement = document.querySelector("#to_product_id");
+        let inputElement = document.querySelector("#to_product_id");
+
+        if (!inputElement) {
+            inputElement =  document.querySelector(
+                '[name="to_product_id"] a span'
+            );
+        }
         const inputElement1 = document.querySelector("#order_number");
 
         let UPC, Model, ram, ssd, originModel, orderNumber;
@@ -594,7 +600,7 @@
         if (spanElement && inputElement && inputElement1) {
             const ShortName = spanElement.textContent.trim();
             const regex = /\[([A-Z]+[0-9]+[A-Z]*)\]/; // case-insensitive matching
-            const match = inputElement.value.toUpperCase().match(regex);
+            const match = inputElement.value ? inputElement.value.toUpperCase().match(regex) : inputElement.textContent.toUpperCase().match(regex);
             UPC = match ? match[1] : ""; // Ensure UPC is extracted correctly
             orderNumber = inputElement1.value.toUpperCase().trim();
 
