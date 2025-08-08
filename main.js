@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.3
-// @description  Allow print label after done
+// @version      0.19.4
+// @description  Split long short name
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -68,7 +68,13 @@
         ctx.textAlign = "center";
 
         // Add the model (first line of text)
-        ctx.fillText(model, width / 2, height * 0.3);
+        if (model.includes('|')) {
+            model = model.split('|');
+            ctx.fillText(model[0].trim(), width / 2, height * 0.15);
+            ctx.fillText(model[1].trim(), width / 2, height * 0.3);
+        } else {
+            ctx.fillText(model, width / 2, height * 0.3);
+        }
 
         // Add the specs (second line of text)
         ctx.fillText(specs, width / 2, height * 0.45);
