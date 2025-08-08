@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.4
-// @description  Split long short name
+// @version      0.19.5
+// @description  Fix Font Size
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -70,8 +70,10 @@
         // Add the model (first line of text)
         if (model.includes('|')) {
             model = model.split('|');
-            ctx.fillText(model[0].trim(), width / 2, height * 0.15);
+            ctx.font = `bold ${Math.round(14 * (dpi / 96))}px Arial`; // Smaller font size (14px)
+            ctx.fillText(model[0].trim(), width / 2, height * 0.2);
             ctx.fillText(model[1].trim(), width / 2, height * 0.3);
+            ctx.font = `bold ${Math.round(16 * (dpi / 96))}px Arial`; // Smaller font size (16px)
         } else {
             ctx.fillText(model, width / 2, height * 0.3);
         }
