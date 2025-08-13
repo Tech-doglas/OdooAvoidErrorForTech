@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.5
-// @description  Fix Font Size
+// @version      0.19.6
+// @description  Fix Error on Load
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -68,7 +68,7 @@
         ctx.textAlign = "center";
 
         // Add the model (first line of text)
-        if (model.includes('|')) {
+        if (model && model.includes('|')) {
             model = model.split('|');
             ctx.font = `bold ${Math.round(14 * (dpi / 96))}px Arial`; // Smaller font size (14px)
             ctx.fillText(model[0].trim(), width / 2, height * 0.2);
