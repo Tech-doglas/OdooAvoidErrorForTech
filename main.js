@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.6
-// @description  Fix Error on Load
+// @version      0.19.7
+// @description  Feat os install model
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -485,6 +485,19 @@
             },
         });
 
+        let osInstallModels = [];
+        await $.ajax({
+            url: "https://raw.githubusercontent.com/Tech-doglas/OdooAvoidErrorForTech/refs/heads/main/OsInstall.txt",
+            type: "GET",
+            cache: false,
+            success: function (response) {
+                osInstallModels = response.split('\n').map(model => model.trim());
+            },
+            error: function (xhr) {
+                alert(`Error: ${xhr.responseJSON.error}`);
+            },
+        });
+
         if (rows) {
             rows.forEach((row) => {
                 // Get the quantity cell
@@ -498,9 +511,7 @@
 
                 if (NameCell) {
                     if (
-                        NameCell.textContent.includes("15S-FQ0008NIA") ||
-                        NameCell.textContent.includes("250 G9") ||
-                        NameCell.textContent.includes("83A100QURM")
+                        osInstallModels.find(m => NameCell.textContent.includes(m))
                     ) {
 
 
