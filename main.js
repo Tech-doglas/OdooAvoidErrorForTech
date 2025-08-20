@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Enhance Function in odoo for Tech - Dev
 // @namespace    http://tampermonkey.net/
-// @version      0.19.7
-// @description  Feat os install model
+// @version      0.19.8
+// @description  Feat Steam deck support
 // @author       Danny, Toby, HL
 // @match        https://*.odoo.com/*
 // @grant        none
@@ -654,6 +654,12 @@
                 ram = temp_spec[0];
                 ssd = temp_spec[1];
             }
+            else if (ShortName.toUpperCase().startsWith("STEAM DECK")) {
+                ram = '';
+                ssd = '';
+                Model = ShortName;
+                originModel = "STEAM DECK";
+            }
         }
 
         return {UPC, Model, ram, ssd, originModel, orderNumber};
@@ -756,7 +762,13 @@
         let img_array = []
         renderOrderNumberLabel(orderNumber);
         img_array.push(canvas.toDataURL("image/png"));
-        renderLabel(Model, `${ram}+${ssd}`, UPC);
+        let spec = ''
+        if (ram && ssd) {
+            spec = `${ram}+${ssd}`
+        } else {
+            spec = `${ram}${ssd}`
+        }
+        renderLabel(Model, spec, UPC);
         img_array.push(canvas.toDataURL("image/png"));
 
         const formData = `text_files=${originModel}.txt&ssd=${ssd}&ram=${ram}`
